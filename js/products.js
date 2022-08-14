@@ -25,11 +25,6 @@ fetch(PRODUCTOS_URL)
     </div>
     </div>
     `
-    //cambiamos category.productCount por category.name//
-
-
-
-
     document.getElementsByClassName("pb-5 container")[0].innerHTML = htmlContentToAppend;
     for(let i = 0; i < datos.products.length; i++){
 
