@@ -11,11 +11,11 @@ document.getElementsByClassName("alert alert-danger text-center")[0].style.displ
                     <form action="" id="first-formulario">
                       <label for="email">Email:</label>
                       <input type="email" class="form-control form-control-lg" id="enteremail" placeholder="Email" name="uname">
-                      <h6 class="d-none" id="no-email">`+ "Ingresa tu email" +`</h6>
+                      <h6 class="d-none" id="no-email">`+ "Ingresá tu email" +`</h6>
                     <br>
                       <label for="pwd">Contraseña:</label>
                       <input type="password" class="form-control form-control-lg" id="enterpassword" placeholder="Contraseña" name="password">
-                      <h6 class="d-none" id="no-pass">`+ "Ingresa tu contraseña" +`</h6>
+                      <h6 class="d-none" id="no-pass">`+ "Ingresá tu contraseña (mayor a 10 caracteres)" +`</h6>
                       <br>
                       <input type="submit" class="btn btn-primary btn-lg" id="boton">
                   </form>
