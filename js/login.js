@@ -1,54 +1,67 @@
 let htmlContentToAppend1 = "";
-let htmlContentToAppend2 = "";
+let htmlContentToAppendWarnings = "";
 document.getElementsByClassName("alert alert-danger text-center")[0].style.display = "none";//oculto el mensaje de funcionalidad en desarrollo
     htmlContentToAppend1 += `
-    <img src="img/login.png" class="img-thumbnail">
+    <img src="img/login.png">
     
     <div class="text-center p-4">
-                    <h2>`+ "Inicio de sesión" +`</h2> 
-                <form>
-                     <div class="form-group" id="form1">
-                     <br>
-                     <label>Email</label>
-                     <input type="email" id="email" class="form-control" aria-describedby="emailHelp" placeholder="Email">
-                     <br>
-                     <p class="text-danger d-none" id="faltaemail">Ingresa tu e-mail</p>
-                     </div>
-                    <div class="form-group" id="form2">
+                    <h3>`+ "Inicio de sesión" +`</h3> 
+                    
+                    <div class="form-group">
+                    <form action="" id="first-formulario">
+                      <label for="email">Email:</label>
+                      <input type="email" class="form-control form-control-lg" id="enteremail" placeholder="Email" name="uname">
+                      <h6 class="d-none" id="no-email">`+ "Ingresa tu email" +`</h6>
                     <br>
-                    <label for="exampleInputPassword1">Contraseña</label>
-                    <input type="password" id="password" class="form-control" placeholder="Contraseña">
-                    <br>
-                    <p class="text-danger d-none" id="faltacontraseña">Ingresa tu contraseña</p>
-                    </div>
-                    <br>
-                    <button type="submit" class="btn btn-primary" id=boton">Ingresar</button>
-                </form>
-    </div>
-    
+                      <label for="pwd">Contraseña:</label>
+                      <input type="password" class="form-control form-control-lg" id="enterpassword" placeholder="Contraseña" name="password">
+                      <h6 class="d-none" id="no-pass">`+ "Ingresa tu contraseña" +`</h6>
+                      <br>
+                      <input type="submit" class="btn btn-primary btn-lg" id="boton">
+                  </form>
+                  </div>
+          </div>
     `;
     document.getElementsByClassName("container")[0].innerHTML = htmlContentToAppend1;
-    let textoEmail = document.getElementById('email');
-    let textoPass = document.getElementById('password');
-    let miBoton = document.getElementById('boton');
-    miBoton.addEventListener('click', function(evento) {
-        console.log(evento);
-    });
 
-    textoEmail.addEventListener('keypress', function(evento) {
-        if (textoEmail.value.length < 2) {
-            miBoton.disabled = true;
-            console.log('No ingresó email');
-            textoEmail.style.border = 'red solid 2px';
-            document.getElementById("faltacontraseña").className = "text-danger";
-            document.getElementById("faltaemail").className = "text-danger";
+
+    document.getElementById('first-formulario').addEventListener('submit', function(evento){    
+      let textoEmail = document.getElementById('enteremail').value;
+      let textoPass = document.getElementById('enterpassword').value;
+
+      if (textoEmail.length === 0){
+      evento.preventDefault();
+      document.getElementById("no-pass").className = "text-danger";
+      document.getElementById("no-email").className = "text-danger";
+      console.log('Ingresó un email vacío');
+    }
+    if (textoPass.length === 0){
+      evento.preventDefault();
+      document.getElementById("no-pass").className = "text-danger";
+      document.getElementById("no-email").className = "text-danger";
+      console.log('Ingresó contraseña vacía');
+    }
+    if (textoEmail.length < 10 && textoEmail.length != 0){
+      evento.preventDefault();
+      document.getElementById("no-pass").className = "text-danger";
+      document.getElementById("no-email").className = "text-danger";
+      console.log('Ingresó un email incompleto');
+    }
+    if (textoPass.length < 10 && textoPass.length != 0){
+      evento.preventDefault();
+      document.getElementById("no-pass").className = "text-danger";
+      document.getElementById("no-email").className = "text-danger";
+      console.log('Contraseña demasiado corta');
+    }
     
-        } else {
-            miBoton.disabled = false;
-            console.log('Ingresó email');
-            textoEmail.style.border = 'blue solid 1px';
-            textoPass.style.border = 'blue solid 1px';
-            document.getElementById("faltacontraseña").className = "text-danger d-none";
-            document.getElementById("faltaemail").className = "text-danger d-none";
-        }
-    });
+    if (textoEmail.length >= 10){
+      if (textoPass.length >= 10){
+        evento.preventDefault();
+        document.getElementById("no-pass").className = "d-none";
+        document.getElementById("no-email").className = "d-none";
+        console.log('Se envian los datos');
+      }
+    }
+    })
+
+
