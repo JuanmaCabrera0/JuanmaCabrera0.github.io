@@ -1,5 +1,4 @@
 let htmlContentToAppend1 = "";
-let htmlContentToAppendWarnings = "";
 document.getElementsByClassName("alert alert-danger text-center")[0].style.display = "none";//oculto el mensaje de funcionalidad en desarrollo
     htmlContentToAppend1 += `
     <img src="img/login.png">
