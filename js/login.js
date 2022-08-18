@@ -59,7 +59,7 @@ document.getElementsByClassName("alert alert-danger text-center")[0].style.displ
         document.getElementById("no-pass").className = "d-none";
         document.getElementById("no-email").className = "d-none";
         console.log('Se envian los datos');
-      }
+        window.location.href="index.html";      }
     }
     })
 
