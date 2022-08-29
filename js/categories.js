@@ -92,6 +92,7 @@ document.addEventListener("DOMContentLoaded", function(e){
         if (resultObj.status === "ok"){
             currentCategoriesArray = resultObj.data
             showCategoriesList()
+            console.log(currentCategoriesArray);
             //sortAndShowCategories(ORDER_ASC_BY_NAME, resultObj.data);
         }
     });
