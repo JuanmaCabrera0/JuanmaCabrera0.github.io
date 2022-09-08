@@ -1,7 +1,7 @@
 let htmlContentToAppend1 = "";
 document.getElementsByClassName("alert alert-danger text-center")[0].style.display = "none";//oculto el mensaje de funcionalidad en desarrollo
     htmlContentToAppend1 += `
-    <img src="img/login.png">
+    <img src="img/login.png" class="w-100">
     
     <div class="text-center p-4">
                     <h3>`+ "Inicio de sesión" +`</h3> 

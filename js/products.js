@@ -1,18 +1,28 @@
-const ORDER_ASC_BY_COST = "Cost from highest to lowest"; //Definimos el precio ascendente
-const ORDER_DESC_BY_COST = "Cost from lowest to highest"; //Definimos el precio descendente 
+const ORDER_ASC_BY_COST = "ascendente"; //Definimos el precio ascendente
+const ORDER_DESC_BY_COST = "descendente"; //Definimos el precio descendente 
 const ORDER_BY_SOLD_COUNT = "Relevance";
 var currentSortCriteria = undefined;
 var currentProductsArray = [];
 var productsArray = [];
 var minCost = undefined;
 var maxCost = undefined;
+
+ // Oculto mensaje de alerta
 document.getElementsByClassName("alert alert-danger text-center")[0].style.display = "none";
+//Agrego nombre de usuario del usuario en el nav
 let htmlContentToAppend2 = "";
 htmlContentToAppend2 += `<li class="nav-item">
 <a class="nav-link" href="">`+localStorage.getItem('usernameValue')+`</a></li>`;
+
 document.getElementsByClassName('navbar-nav w-100 justify-content-between')[0].innerHTML+=htmlContentToAppend2;
 
+function clickeaCadaProducto(x){
+    let product = currentProductsArray[x];
+    localStorage.setItem("identifyer", product.id);
+    window.location.href = 'product-info.html';
+  }
 
+// funcion que recibe un criterio y hace un sort  de los productos según el caso
 function sortProducts(criteria, array){
   let result = [];
   if (criteria === ORDER_ASC_BY_COST) //ascendente
@@ -48,7 +58,9 @@ function sortProducts(criteria, array){
   return result;
 }
 
-//Esta funcion muestra los productos
+//Esta funcion muestra los productos, pasa por un filtro que chequea que min y max estén bien
+// contempla los casos de mincost y maxcost vacìo por si usuario cliqueó filtrar sin poner nada, o solo
+//llenó uno de los campos
 function showProductsList(){
 
   let htmlContentToAppend = "";
@@ -60,9 +72,9 @@ function showProductsList(){
           ((maxCost == undefined) || (maxCost != undefined && parseInt(product.cost) <= maxCost))){
 
       htmlContentToAppend += `
-      <div onclick="clickeaCadaProducto()" class="list-group-item list-group-item-action cursor-active">
-          <div class="row">
-              <div class="col-3">
+      <div class="list-group-item list-group-item-action cursor-active" onClick="clickeaCadaProducto(`+i+`)">
+      <div class="row">
+              <div class="col-3" >
               <img src="` + product.image + `" alt="` + product.desc + `" class="img-thumbnail">
               </div>
               <div class="col">
@@ -75,13 +87,12 @@ function showProductsList(){
           </div>
       </div>
       `
-      
       document.getElementById("cat-list-container").innerHTML = htmlContentToAppend;
- 
+
   }
 }
 }
-
+// 
 function sortAndShowProducts(sortCriteria, productsArray){
   currentSortCriteria = sortCriteria;
 
@@ -93,10 +104,9 @@ function sortAndShowProducts(sortCriteria, productsArray){
 
   showProductsList();
 }
-
-//Función que se ejecuta una vez que se haya lanzado el evento de
-//que el documento se encuentra cargado, es decir, se encuentran todos los
-//elementos HTML presentes.
+// esto se ejecuta cuando el DOM esté completamente cargado, obtiene los datos de la API y si está todo
+// en orden, carga los productos por defecto en orden ascendente llamando a sortandshowproducts,
+// también agrega el nombre de la categoría
 document.addEventListener("DOMContentLoaded", function(e){
   getJSONData(PRODUCTS_URL).then(function(resultObj){
       if (resultObj.status === "ok")
@@ -105,10 +115,11 @@ document.addEventListener("DOMContentLoaded", function(e){
           let htmlContentToAppend1 ="";
           let categoryName = resultObj.data.catName;
           htmlContentToAppend1 = `<p class="lead"> `+ "Verás aquí todos los productos de la categoría " + categoryName +`</p>`
-          document.getElementsByClassName("text-center p-4")[0].innerHTML += htmlContentToAppend1
+          document.getElementsByClassName("text-center p-4")[0].innerHTML += htmlContentToAppend1;
       }
   });
 
+//Agrego el contenido HTML que es estático, botones, inputs, textos etc.
   let htmlContentToAppend = "";
   htmlContentToAppend += `
   <div class="text-center p-4">
@@ -156,18 +167,26 @@ document.addEventListener("DOMContentLoaded", function(e){
   `
   document.getElementsByClassName("pb-5 container")[0].innerHTML = htmlContentToAppend;
 
-
+//Event listener de click que detecta cuando usuario cliqueó el botón y llama a la función sortandshow
+// con el criterio correspondiente según el botón que se cliqueó.
   document.getElementById("sortAsc").addEventListener("click", function(){
       sortAndShowProducts(ORDER_ASC_BY_COST);
   });
 
+//Event listener de click que detecta cuando usuario cliqueó el botón y llama a la función sortandshow
+// con el criterio correspondiente según el botón que se cliqueó.
   document.getElementById("sortDesc").addEventListener("click", function(){
       sortAndShowProducts(ORDER_DESC_BY_COST);
   });
 
+//Event listener de click que detecta cuando usuario cliqueó el botón y llama a la función sortandshow
+// con el criterio correspondiente según el botón que se cliqueó.
   document.getElementById("sortByCount").addEventListener("click", function(){
       sortAndShowProducts(ORDER_BY_SOLD_COUNT);
   });
+  
+//Event listener de click que detecta cuando usuario cliqueó botón limpiar y establece mincost y maxcost
+//como indefinidos, luego llama a showproductslist
   document.getElementById("clearRangeFilter").addEventListener("click", function(){
       document.getElementById("rangeFilterCountMin").value = "";
       document.getElementById("rangeFilterCountMax").value = "";
@@ -178,9 +197,12 @@ document.addEventListener("DOMContentLoaded", function(e){
       showProductsList();
   });
 
+      //escucho los clicks de filtrar, según lo que contengan los inputs de min y max se hacen algunas 
+      // modificaciones. Si mincost no es indefinido (es decir, se puso algo en esa casilla), lo que
+      // hace es redefinirlo como el entero más cercano, para evitar problemas con decimales. Luego llama
+      // a showproducts denuevo.
   document.getElementById("rangeFilterCount").addEventListener("click", function(){
-      //Obtengo el mínimo y máximo de los intervalos para filtrar por cantidad
-      //de productos.
+
       minCost = document.getElementById("rangeFilterCountMin").value;
       maxCost = document.getElementById("rangeFilterCountMax").value;
 
