@@ -96,6 +96,27 @@ function mostrarComments(x){
         // siendo x el mismo array que recibió mostrarComments, el respectivo numero de la iteración.
       }
   }
+  let commentsToAppendear = "";
+      commentsToAppendear = `
+      <h4 class="text-center pt-3">Comentar</h4>
+      <h6 class="text-center pt-2">Tu opinión:</h6>
+      <div class="input-group w-50% p-2">
+      <textarea style="resize: none;" rows="5" class="form-control mb-3" id="inputComments" aria-label="With textarea"></textarea>
+    </div>
+    <div class="input-group mb-3 w-50% p-2">
+    <select class="form-select" id="puntuacion" aria-label="Default select example">
+    <option selected>Puntuación</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="4">5</option>
+  </select>
+  <input class="btn btn-primary" id="submit" type="submit" value="Enviar">
+</div>
+      
+      `
+      document.getElementById("cat-list-container").innerHTML += commentsToAppendear;
 
 }
 
