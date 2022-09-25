@@ -9,12 +9,20 @@ var maxCost = undefined;
 
  // Oculto mensaje de alerta
 document.getElementsByClassName("alert alert-danger text-center")[0].style.display = "none";
-//Agrego nombre de usuario del usuario en el nav
-let htmlContentToAppend2 = "";
-htmlContentToAppend2 += `<li class="nav-item">
-<a class="nav-link" href="">`+localStorage.getItem('usernameValue')+`</a></li>`;
+ //Agrego nombre de usuario del usuario en el nav
+ let htmlContentToAppend2 = "";
+ htmlContentToAppend2 += `<li class="nav-item dropdown">
+ <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ `+localStorage.getItem('usernameValue')+`
+ </a>
+ <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+   <li><a class="dropdown-item text-center" href="cart.html">Mi carrito</a></li>
+   <li><a class="dropdown-item text-center" href="my-profile.html">Mi perfil</a></li>
+   <li><a class="dropdown-item text-center" href="index.html">Cerrar sesión</a></li>
+ </ul>
+</li>`;
+ document.getElementsByClassName('navbar-nav w-100 justify-content-between')[0].innerHTML+=htmlContentToAppend2;
 
-document.getElementsByClassName('navbar-nav w-100 justify-content-between')[0].innerHTML+=htmlContentToAppend2;
 
 function clickeaCadaProducto(x){
     let product = currentProductsArray[x];

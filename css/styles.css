@@ -147,6 +147,8 @@ footer p {
   animation-delay: -0.15s;
 }
 
+
+
 @keyframes lds-ring {
   0% {
     transform: rotate(0deg);

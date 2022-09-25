@@ -4,8 +4,16 @@
 
  //Agrego nombre de usuario del usuario en el nav
  let htmlContentToAppend2 = "";
- htmlContentToAppend2 += `<li class="nav-item">
- <a class="nav-link" href="">`+localStorage.getItem('usernameValue')+`</a></li>`;
+ htmlContentToAppend2 += `<li class="nav-item dropdown">
+ <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ `+localStorage.getItem('usernameValue')+`
+ </a>
+ <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+   <li><a class="dropdown-item text-center" href="cart.html">Mi carrito</a></li>
+   <li><a class="dropdown-item text-center" href="my-profile.html">Mi perfil</a></li>
+   <li><a class="dropdown-item text-center" href="index.html">Cerrar sesión</a></li>
+ </ul>
+</li>`;
  document.getElementsByClassName('navbar-nav w-100 justify-content-between')[0].innerHTML+=htmlContentToAppend2;
 
 //Event listener que carga elementos HTML una vez esté el DOM cargado.
@@ -50,21 +58,52 @@ document.addEventListener("DOMContentLoaded", function(e){
               </div>
               </div>    
               <div class="row">
-                <div class="card-deck" id="cat-list-container">
-                </div>
+                <div class="card-deck" id="cat-list-container"></div>
+              </div>
+
+              <div class="container">
+               <div class="row justify-content-center" id="row">
+               <h4 class="text-center pt-2 pb-2">Productos Relacionados:</h4>
+               </div>
+            </div>
             </div>
             `
              document.getElementsByClassName("pb-5 container")[0].innerHTML = htmlContentToAppend;
-        }
-    })
-    //Obtiene la información de los comentarios
+             mostrarRelatedProducts(resultObj.data.relatedProducts);
+
+               //Obtiene la información de los comentarios
     getJSONData(PRODUCT_INFO_COMMENTS_URL).then(function(resultObj){
       if (resultObj.status === "ok"){
         let commentsArray = resultObj.data; //Si está todo ok, llama a la función que muestra los comentarios de usuarios.
         mostrarComments(commentsArray);
       }
+    })} 
     })
 })
+
+
+function mostrarRelatedProducts(x){
+  let relatedProductsToAppend = "";
+  for (let i=0; i<x.length; i++){
+  relatedProductsToAppend = `     
+  <div class="col-md-4 cursor-active" onClick="clickeaCadaProducto(`+x[i].id+`)">
+              <div class="card mb-4 box-shadow" >
+              <img class="card-img-top" src="`+x[i].image+`" alt="Card image cap">
+                <div class="card-body">
+                <p class="card-text text-center">`+x[i].name+`</p>
+              </div>
+            </div>
+        </div>
+
+      `
+      document.getElementById("row").innerHTML += relatedProductsToAppend;
+    }
+}
+
+function clickeaCadaProducto(x){
+    localStorage.setItem("identifyer", x);
+    window.location.href = 'product-info.html';
+}
 
 function mostrarComments(x){ 
   //Función que muestra los comentarios. Recibe un array x con la información fetcheada.
@@ -94,26 +133,29 @@ function mostrarComments(x){
         document.getElementById("cat-list-container").innerHTML += htmlContentToAppend;
         mostrarRatings(x,i) //Llama a la función que mostrará la cantidad de estrellas que usuario dejó
         // siendo x el mismo array que recibió mostrarComments, el respectivo numero de la iteración.
+
       }
   }
+
+
   let commentsToAppendear = "";
       commentsToAppendear = `
       <h4 class="text-center pt-3">Comentar</h4>
       <h6 class="text-center pt-2">Tu opinión:</h6>
       <div class="input-group w-50% p-2">
-      <textarea style="resize: none;" rows="5" class="form-control mb-3" id="inputComments" aria-label="With textarea"></textarea>
-    </div>
+         <textarea style="resize: none;" rows="5" class="form-control mb-3" id="inputComments" aria-label="With textarea"></textarea>
+      </div>
     <div class="input-group mb-3 w-50% p-2">
-    <select class="form-select" id="puntuacion" aria-label="Default select example">
-    <option selected>Puntuación</option>
-    <option value="1">1</option>
-    <option value="2">2</option>
-    <option value="3">3</option>
-    <option value="4">4</option>
-    <option value="4">5</option>
-  </select>
-  <input class="btn btn-primary" id="submit" type="submit" value="Enviar">
-</div>
+      <select class="form-select" id="puntuacion" aria-label="Default select example">
+        <option selected>Puntuación</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="4">5</option>
+     </select>
+        <input class="btn btn-primary" id="submit" type="submit" value="Enviar">
+    </div>
       
       `
       document.getElementById("cat-list-container").innerHTML += commentsToAppendear;
