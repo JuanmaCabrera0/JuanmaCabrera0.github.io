@@ -8,7 +8,9 @@
 .jumbotron .display-4 {
   font-weight: bold;
 }
-
+#cantidad{
+  background: none !important;
+  }
 nav a {
   text-decoration: none;
 }
@@ -190,3 +192,4 @@ a.custom-card:hover {
 .checked {
   color: orange;
 }
+

@@ -27,11 +27,20 @@ document.addEventListener("DOMContentLoaded", function(e){
             htmlContentToAppend = ` 
 
             <div class="d-flex justify-content-center container mt-5">
-            <div class="card p-3 bg-white">
+              <div class="card p-3 bg-white">
 
-            <div><h2 class="text-center pt-2 display-4">`+resultObj.data.name+`</h2></div>
+               <div><h2 class="text-center pt-2 display-4">`+resultObj.data.name+`</h2></div>
+            
+            <br>
+
+                 <div class="d-grid gap-2 col-3 mx-auto">
+                  <button class="btn btn-success" id="buyButton" type="button">Agregar al carrito</button>
+            
+                </div>
+            <br>
                 <div class="about-product text-center mt-2 mb-3"><img src="`+resultObj.data.images[0]+`" width="70%">
                 </div>
+                
                 <div class="stats mt-2">
                     <div class="d-flex justify-content-between p-price"><p class="fw-bold">Precio</p>
                     <p>`+resultObj.data.currency+` `+resultObj.data.cost+`</p>
@@ -44,27 +53,29 @@ document.addEventListener("DOMContentLoaded", function(e){
                     <p>`+resultObj.data.soldCount+`</p>
                     <div class="d-flex justify-content-between p-price"><p class="fw-bold">Más imágenes</p></div>
                 </div>
-                <div class="card-group">
-                <div class="card">
-                  <img class="card-img-top" src="`+resultObj.data.images[1]+`" alt="Card image cap">
-                </div>
-                <div class="card">
-                  <img class="card-img-top" src="`+resultObj.data.images[2]+`" alt="Card image cap">
-                </div>
-                <div class="card">
-                  <img class="card-img-top" src="`+resultObj.data.images[3]+`" alt="Card image cap">
-                </div>
-              </div>
-              </div>
-              </div>    
-              <div class="row">
-                <div class="card-deck" id="cat-list-container"></div>
-              </div>
+
+                 <div class="card-group">
+                 <div class="card">
+                   <img class="card-img-top" src="`+resultObj.data.images[1]+`" alt="Card image cap">
+                 </div>
+                 <div class="card">
+                   <img class="card-img-top" src="`+resultObj.data.images[2]+`" alt="Card image cap">
+                 </div>
+                 <div class="card">
+                   <img class="card-img-top" src="`+resultObj.data.images[3]+`" alt="Card image cap">
+                 </div>
+               </div>
+               </div>
+               </div>    
+               <div class="row">
+                 <div class="card-deck" id="cat-list-container"></div>
+               </div>
 
               <div class="container">
                <div class="row justify-content-center" id="row">
                <h4 class="text-center pt-2 pb-2">Productos Relacionados:</h4>
                </div>
+            
             </div>
             </div>
             `
@@ -73,27 +84,75 @@ document.addEventListener("DOMContentLoaded", function(e){
 
                //Obtiene la información de los comentarios
     getJSONData(PRODUCT_INFO_COMMENTS_URL).then(function(resultObj){
+
       if (resultObj.status === "ok"){
+
         let commentsArray = resultObj.data; //Si está todo ok, llama a la función que muestra los comentarios de usuarios.
+
         mostrarComments(commentsArray);
+
       }
+
     })} 
+
+
+    document.getElementById("buyButton").addEventListener("click", function(e){
+      addToCart(resultObj.data.id)
     })
+
+    })
+
 })
+
+function addToCart(id) {
+
+  var currentCart = JSON.parse(localStorage.getItem("allItems"));
+
+  if(currentCart == null) currentCart = [];
+
+  var newItem = id;
+
+  var entry = { newItem,};
+
+  localStorage.setItem("entry", JSON.stringify(entry));
+
+  exists = currentCart.some(obj => obj.newItem === entry.newItem);
+
+if (!exists) {
+
+  currentCart.push(entry);
+
+  localStorage.setItem("allItems", JSON.stringify(currentCart));
+
+}else{
+  alert("Ya agregaste este producto al carrito, podrás modificar la cantidad antes de pagar.")
+}
+  
+};
+
 
 
 function mostrarRelatedProducts(x){
   let relatedProductsToAppend = "";
   for (let i=0; i<x.length; i++){
   relatedProductsToAppend = `     
+
   <div class="col-md-4 cursor-active" onClick="clickeaCadaProducto(`+x[i].id+`)">
-              <div class="card mb-4 box-shadow" >
-              <img class="card-img-top" src="`+x[i].image+`" alt="Card image cap">
-                <div class="card-body">
-                <p class="card-text text-center">`+x[i].name+`</p>
-              </div>
+
+      <div class="card mb-4 box-shadow" >
+
+          <img class="card-img-top" src="`+x[i].image+`" alt="Card image cap">
+
+            <div class="card-body">
+
+              <p class="card-text text-center">`+x[i].name+`</p>
+
             </div>
-        </div>
+              
+      </div>
+
+    </div>
+
 
       `
       document.getElementById("row").innerHTML += relatedProductsToAppend;
@@ -120,12 +179,13 @@ function mostrarComments(x){
     //y su comentario.
     for (let i=0; i < x.length; i++){
       htmlContentToAppend =`
-          <div class="list-group-item">
-           <div class="row">
+      <div class="list-group-item">
+          <div class="row">
               <div class="col">
-              <div class="star-container"></div>
-                  <p class="fw-bold m-0">`+x[i].user+`</p><small>`+x[i].dateTime+`</small>
-                  <p>` + x[i].description + `</p>
+                <div class="star-container">
+                </div>
+                   <p class="fw-bold m-0">`+x[i].user+`</p><small>`+x[i].dateTime+`</small>
+                   <p>` + x[i].description + `</p>
               </div>
           </div>
       </div>
