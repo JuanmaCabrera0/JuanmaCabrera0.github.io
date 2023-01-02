@@ -8,8 +8,6 @@ const PROD_INF = `https://japceibal.github.io/emercado-api/products/`
 
 document.getElementsByClassName("alert alert-danger text-center")[0].style.display = "none";
 
-let currency = 0;
-
 let subtotal = 0; 
 
 let cost = 0;
@@ -19,72 +17,208 @@ let stock = 10; //Esta variable stock la pongo como 10 porque no tenemos informa
 
 let added = [];
 
+let currency = 0; // significa uyu
+
+let total = 0
+
 function showCartInfo(x){ //Función que recibe el array con la data del carrito de usuario y lo manipula
 
     let htmlContentToAppendaux = ``;
 
-    for(let i=0; i<x.length; i++){ //Este for recorre todo el length de cart y por cada iteración hace las cuentas necesarias y agrega el contenido HTML.
-        
-         subtotal = x[i].count*x[i].unitCost; //Calculo el subtotal como count por unit cost.
+    if (x.currency != 'UYU'){
 
-         cost = x[i].unitCost; //Y cost como unit cost, el costo por unidad del artículo.
+        currency = 1;
+    }
 
-         if (x[i].currency != "UYU"){ //Este if chequea si la divisa es UYU o USD. Iniciualmente currency la definí como 0 y digo que significa UYU. Si la currency
-            //de la entrada iésima de mi array no es UYU, entonces currency es 1 (USD). De lo contrario es 0 (UYU).
-            currency = 1;
-         }else{currency = 0}
-         
-        htmlContentToAppendaux += //Agrego el contenido HTML a la tabla, con la información necesaria en el carrito.
-        `
+htmlContentToAppendaux += `
+
         <tr id=table">
-        <td class="w-25"><img src="${x[i].image}" class="img-thumbnail" alt="..."></td>
-        <td class="w-25"><div class=" d-flex">${x[i].name}</div></td>
+        
+        <td class="w-25"><img src="${x.images[0]}" class="img-thumbnail" alt="..."></td>
 
-        <td class="w-25"><div class=" d-flex">${x[i].currency} ${x[i].unitCost}</div></td>
+        <td class="w-25"><div class=" d-flex">${x.name}</div></td>
+
+        <td class="w-25"><div class=" d-flex">${x.currency} ${x.cost}</div></td>
 
         <td class="w-25">
 
           <div class="col-md-3 col-lg-1 d-flex mw-10">
 
-           <input class="text-center" onkeydown="return false" onClick="calcSubtotal(${i},${cost},${currency})" id="cantidad${i}" min="1" max="${stock}" value="${x[i].count}" type="number">
+           <input class="text-center" onkeydown="return false" id="input${x.id}" onClick='calcSubtotal(${x.cost},${currency},${x.id})' min="1" max="${stock}" value="1" type="number">
         
            </div>
+
         </td>
         
-        <td class="w-25"><div id="subtotal${i}" class="d-flex">${x[i].currency} ${subtotal}</div></td>
+        <td class="w-25"><div id="subtotal${x.id}" class="d-flex">${x.currency} ${x.cost}</div></td>
     </tr>
     
         `
-//El input de arriba "prohibe" al usuario cambiar manualmente la cantidad de productos, únicamente podrá hacerlo clickeando los botones de arriba y abajo que están al lado del input.
-//Esos botones llaman a la función calcSubtotal, que calculará el subtotal del artículo según el número de ejemplares que agregó el usuario.
+        let htmlSTotal = ''
+
+        if (x.currency === 'UYU'){
+
+            subtotal = Math.round(subtotal + x.cost/40)
+    }else{
+
+        subtotal = Math.round(subtotal + x.cost)
     }
 
-    document.getElementById("cart-body").innerHTML = htmlContentToAppendaux;
-}
 
-function calcSubtotal(i,costo,moneda){ //Función que calcula el subtotal cada vez que usuario modifica el valor de ejemplares de un artículo. Recibe la entrada específica de la iteración anterior,
-    //el costo por unidad del producto y la divisa.
+        htmlSTotal += `
+        <span>Subtotal</span>
 
-    if (moneda){currency = "USD"}else{currency = "UYU"} //Acá defino currency como un string UYU o USD dependiendo si es 0 o 1.
+        <strong>USD ${subtotal}</strong>
 
-    let slotQty = "cantidad" + i; //Me refiero a la ID específica del input. Ejemplo, la entrada 0 de la tabla tendrá id = "cantidad0", la 1 ="cantidad1" y así.
+        `
 
-    let slotSubtotal = "subtotal" + i; //Me refiero a la ID específica del subtotal. Ejemplo, la entrada 0 de la tabla tendrá id = "subtotal0", la 1 ="subtotal1" y así.
+    document.getElementById('subtotalCost').innerHTML = htmlSTotal
 
-    let times = document.getElementById(slotQty).value; //Times será la cantidad de veces por las que tengo que multiplicar el valor unitario. Si usuario puso 6 será 6.
-
-    subtotal = times * costo; //Acá calculo times por costo unitario y obtengo el nuevo subtotal.
-    
-    const oldSubtotal = document.getElementById(slotSubtotal); //Mi antiguo subtotal será este.
-    
-    const newSubtotal = document.createElement('div'); //Y aquí creo un div con mi nuevo subtotal
-
-    newSubtotal.innerHTML = `<div id="subtotal${i}" class="d-flex">`+currency + ` ` + subtotal+`</div>`;
-
-    oldSubtotal.parentNode.replaceChild(newSubtotal, oldSubtotal)  //Y por último reemplazo el viejo por el nuevo
+    document.getElementById("cart-body").innerHTML += htmlContentToAppendaux;
 
     
 }
+
+let radio1 = document.getElementById('flexRadioDefault1')
+
+let radio2 = document.getElementById('flexRadioDefault2')
+
+let radio3 = document.getElementById('flexRadioDefault3')
+
+let htmlSTotal = ''
+
+let htmlShippingCost = ''
+
+radio1.addEventListener('click', function(e){
+
+    if (radio1.checked){
+
+        calculateTotal(0.15)
+    }
+})
+radio2.addEventListener('click', function(e){
+
+    if (radio2.checked){
+
+        calculateTotal(0.07)
+    }
+})
+radio3.addEventListener('click', function(e){
+
+    if (radio3.checked){
+
+        calculateTotal(0.05)
+    }
+})
+
+
+function calculateTotal(percentage){ //suma todos los subtotales para mostrar en total, y llama a la calculadora de porcentajes segun tipo de envio
+
+    total = Math.round(subtotal*percentage + subtotal)
+
+    shippingCost = Math.round(subtotal*percentage)
+
+    htmlSTotal = `
+    
+        <span>Subtotal</span>
+
+        <strong>USD ${total}</strong>
+
+        `
+        htmlShippingCost = `
+
+        <div>
+
+      <h6 class="my-0">Costo de envío</h6>
+      
+      <small class="text-muted">Según el tipo de envío</small>
+
+      </div>
+
+      <strong>USD ${shippingCost}</strong>
+
+        `
+
+    document.getElementById('totalCost').innerHTML = htmlSTotal
+
+    document.getElementById('shippingCost').innerHTML = htmlShippingCost
+}
+
+function calcSubtotal(cost,currency,id){ //calcula el subtotal de cada producto cuando usuario suma o resta ejemplares
+
+    let htmlTotal = ''
+
+    let slotInput = 'input' + id;
+
+    let slotProductSubtotal = 'subtotal' + id
+
+    let inputSlot = document.getElementById(slotInput).value
+
+    if (currency === 0){
+
+    subtotal = Math.round(subtotal + cost/40)
+
+    let subtotalSlot = Math.round(inputSlot*cost)
+
+    const oldSubtotal = document.getElementById(slotProductSubtotal); 
+    
+    const newSubtotal = document.createElement('div'); 
+
+    newSubtotal.innerHTML = `<td class="w-25"><div class="d-flex" id="subtotal${id}">USD `+subtotalSlot+`</div></td>`
+    
+    oldSubtotal.parentNode.replaceChild(newSubtotal, oldSubtotal) 
+
+    htmlTotal += `
+
+        <span>Subtotal</span>
+
+        <strong>UYU ${subtotal}</strong>
+
+        `
+    document.getElementById('subtotalCost').innerHTML = htmlTotal
+
+
+}else{
+
+    subtotal = Math.round(subtotal + cost)
+
+    let subtotalSlot = Math.round(inputSlot*cost)
+
+    const oldSubtotal = document.getElementById(slotProductSubtotal); 
+    
+    const newSubtotal = document.createElement('div'); 
+
+    newSubtotal.innerHTML = `<td class="w-25"><div class="d-flex" id="subtotal${id}">UYU `+subtotalSlot+`</div></td>`
+    
+    oldSubtotal.parentNode.replaceChild(newSubtotal, oldSubtotal) 
+
+    htmlTotal += `
+
+        <span>Subtotal</span>
+
+        <strong>USD ${subtotal}</strong>
+
+        `
+    document.getElementById('subtotalCost').innerHTML = htmlTotal
+
+
+}
+
+if(radio1.checked){
+
+    calculateTotal(0.15)
+
+}else if (radio2.checked){
+
+    calculateTotal(0.07)
+
+}else{
+
+    calculateTotal(0.05)
+}
+
+}
+
 function goBack(){
     window.location.href = "categories.html"
 }
@@ -114,9 +248,6 @@ document.addEventListener("DOMContentLoaded", function(e){ //Event listener que 
 
                     showCartInfo(cart) //Y llama a showcartinfo sin pasar por getaddeddata, pues no necesita agregar nada más.
         }
-           
-
-        
 
         }
         
@@ -128,27 +259,18 @@ function getAddedData(x){ //getaddedData recibe un array (el que contiene a toda
 
     for(let i=0; i<x.length; i++){ //Este for recorrerá a lo largo de todo el length de x.
 
-        getJSONData(PROD_INF+x[i].newItem+`.json`).then(function(resultObj){ //Y hará un fetch por cada caso, utilizando la API + la id que se encuentra en la 
-            //iésima entrada + .json.
-            
+        getJSONData(PROD_INF+x[i].newItem+`.json`).then(function(resultObj){ 
+
             if (resultObj.status === "ok"){ 
-        
-                    cart.push( //Por cada fetch que haga en cada iteración, agregará una entrada al array cart con el formato id, name, count, unitcost,etc.
-                            {
-                                "id": resultObj.data.id,
-                                "name": resultObj.data.name,
-                                "count": 1,
-                                "unitCost": resultObj.data.cost,
-                                "currency": resultObj.data.currency,
-                                "image": resultObj.data.images[0],
-                            },
-    
-                    )
-                    
-                    showCartInfo(cart); //Y una vez que cart esté completa, es decir, tenga toda la info de cada producto que usuario tiene en carrito, llama a showcartinfo.
+
+              showCartInfo(resultObj.data)
+
             }
         })
 
+
     }
+
+
 }
 

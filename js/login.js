@@ -1,3 +1,9 @@
+localStorage.removeItem("usernameValue");
+localStorage.removeItem("catID");
+localStorage.removeItem("identifyer");
+localStorage.removeItem("entry");
+localStorage.removeItem("allItems");
+
 let htmlContentToAppend1 = "";
 document.getElementsByClassName("alert alert-danger text-center")[0].style.display = "none";//oculto el mensaje de funcionalidad en desarrollo
     htmlContentToAppend1 += `
